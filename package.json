@@ -1,0 +1,23 @@
+{
+  "source": "index.js",
+  "app": "app.js",
+  "scripts": {
+    "watch": "parcel watch",
+    "build": "parcel build"
+  },
+  "targets": {
+    "app": {
+      "context": "browser",
+      "engines": {
+        "browsers": "> 0.25%"
+      },
+      "isLibrary": false
+    }
+  },
+  "devDependencies": {
+    "parcel": "^2.13.3"
+  },
+  "dependencies": {
+    "uuid": "^11.0.5"
+  }
+}
