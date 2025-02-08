@@ -25,7 +25,10 @@
       for ($y = 0; $y < $scale; $y++) {
         $this->matrice[$y] = [];
         for ($x = 0; $x < $scale; $x++) {
-          $this->matrice[$y][$x] = 0;
+          $this->matrice[$y][$x] = [
+            "opened" => false,
+            "isMine" => false
+          ];
         }
       }
 
@@ -37,8 +40,8 @@
         $x = random_int(0, $scale - 1);
         $y = random_int(0, $scale - 1);
         $case = $this->matrice[$y][$x];
-        if ($case === 0) {
-          $this->matrice[$y][$x] = 1;
+        if ($case["isMine"] === false) {
+          $this->matrice[$y][$x]["isMine"] = true;
           $mines--;
         }
       }

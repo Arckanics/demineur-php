@@ -1,27 +1,4 @@
-import { SessionManager } from "./js/localstorageSession";
-
-//demineur-game-settings-form
-
-const settingsSetup = (main) => {
-	const frame = main.querySelector('#demineur-game-settings-form');
-	const inputs = [...frame.querySelectorAll('select')];
-	const start = frame.querySelector('#start-game');
-	
-	start.onclick = (e) => {
-		e.preventDefault();
-		e.stopImmediatePropagation();
-		e.stopPropagation();
-		const settings = {}
-		
-		inputs.map(i => {
-			const name = i.name
-			settings[name] = i.value
-		})
-		
-		const session = new SessionManager();
-		session.setProperty('settings', JSON.stringify(settings));
-	}
-}
+import { settingsSetup } from "./js/settings";
 
 const initDemineurGame = async ($el) => {
 	const container = document.querySelector($el);
