@@ -2,8 +2,8 @@
   "source": "index.js",
   "app": "public/app.js",
   "scripts": {
-    "watch": "parcel watch",
-    "build": "parcel build"
+    "watch": "node_modules/.bin/parcel watch",
+    "build": "node_modules/.bin/parcel build"
   },
   "targets": {
     "app": {

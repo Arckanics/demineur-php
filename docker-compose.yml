@@ -1,0 +1,22 @@
+
+name: local-apache-php-dev
+services:
+  web:
+    build: .
+    container_name: php-apache-container
+    ports:
+      - "80:80"
+    working_dir: /
+    develop:
+      watch:
+        - action: sync
+          path: ./demineur
+          target: /var/www/html
+          ignore:
+            - node_modules/
+        - action: sync+restart
+          path: ./apache.conf
+          target: /etc/apache2/sites-enabled/000-default.conf
+    volumes:
+      - ./:/var/www/html
+      - ./apache.conf:/etc/apache2/sites-enabled/000-default.conf
