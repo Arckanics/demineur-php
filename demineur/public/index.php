@@ -1,5 +1,7 @@
 <?php
 
+  namespace public;
+
   use game\matrice;
   use vendor\request;
 
@@ -20,9 +22,9 @@
     echo "<div>Le fichier est introuvable</div>";
     return;
   }
-  $cName = "controllers\\".(string)$uri ."Controller";
+
+  $cName = "\\controllers\\". $uri ."Controller";
 
   $controller = new $cName($request);
 
   echo $controller->index();
-
