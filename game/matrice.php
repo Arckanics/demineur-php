@@ -27,7 +27,8 @@
         for ($x = 0; $x < $scale; $x++) {
           $this->matrice[$y][$x] = [
             "opened" => false,
-            "isMine" => false
+            "isMine" => false,
+            "isMarked" => false,
           ];
         }
       }
