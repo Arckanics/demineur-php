@@ -13,10 +13,7 @@
 
     public function index()
     {
-      $view = file_get_contents('../view/index.html');
-      $path = $this->req->getURI();
-
-      return preg_replace('/\{\{ GetScript }}/', $path."app.js", $view);
+      return file_get_contents('../view/index.html');
     }
 
   }
