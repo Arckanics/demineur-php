@@ -1,4 +1,4 @@
-export class Request {
+export class GameRequest {
 	#req;
 	#method = 'GET'; // Définit par défaut la méthode HTTP comme GET
 	#body;
@@ -6,9 +6,12 @@ export class Request {
 	#headers = { 'X-Requested-With': 'XMLHttpRequest' }; // Ajoute "XMLHttpRequest" : "TRUE" à vos en-têtes
 	
 	constructor(url) {
-		this.#req = new URL(url);
+		this.#req = url;
 	}
 	
+	setUrl(url) {
+		this.#req = url
+	}
 	setMethod(method) {
 		if ([ 'GET', 'POST', 'PUT', 'DELETE' ].includes(method.toUpperCase())) { // Vérifie que la méthode est valide
 			this.#method = method.toUpperCase();
