@@ -21,7 +21,6 @@ export const settingsSetup = (main) => {
 		const session = new SessionManager();
 		session.setSession()
 		session.setProperty('settings', JSON.stringify(settings));
-		console.log('click')
 		new Game(session).start();
 	}
 }
