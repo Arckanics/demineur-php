@@ -19,8 +19,8 @@ export const settingsSetup = (main) => {
 		})
 
 		const session = new SessionManager();
-		session.setSession()
+		session.getSession()
 		session.setProperty('settings', JSON.stringify(settings));
-		new Game(session).start();
+		new Game(session).start(main);
 	}
 }
