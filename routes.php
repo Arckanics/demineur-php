@@ -1,5 +1,6 @@
 <?php
   $_ENV['APP_ROUTES'] = [
     "/" => "Index",
-    "/begin" => "Game"
+    "/begin" => "Game",
+    "/update" => "Game"
   ];

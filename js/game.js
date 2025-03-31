@@ -9,11 +9,16 @@ export class Game {
 		this.#session = session;
 	}
 	
-	start(main) {
-		this.#frame = main;
+	#jsonHeader() {
 		const header = new Headers();
 		header.set('Accept', 'application/json');
 		header.set('Content-Type', 'application/json');
+		return header;
+	}
+	
+	start(main) {
+		this.#frame = main;
+		const header = this.#jsonHeader();
 		const gameSession = {
 			"demineur-session-id": this.#session.getSession(),
 			"demineur-settings": this.#session.getProperty('settings'),
@@ -49,6 +54,7 @@ export class Game {
 				gameView.append(cell.getElement())
 				
 				cell.getElement().onclick = (e) => this.#interract(cell, e)
+				cell.getElement().oncontextmenu = (e) => this.#interract(cell, e)
 				this.#gameGrid[y].push(cell)
 			}
 		}
@@ -56,14 +62,64 @@ export class Game {
 		const grid = gameView
 		grid.style.display = "grid"
 		grid.style.width = "fit-content"
-		grid.style.gridTemplateColumns = `repeat(${size}, auto)`
 		grid.style.gridAutoFlow = "row"
+		grid.style.gridTemplateColumns = `repeat(${size}, auto)`
+		
 	}
 	
 	#interract (cell, e) {
 		e.preventDefault()
 		e.stopImmediatePropagation();
 		e.stopPropagation();
-		console.log(cell.getProps())
+		const body = {... cell.getProps() }
+		body.action = e.type === "click" ? "open" : "mark";
+		const gameSession = {
+			"demineur-session-id": this.#session.getSession(),
+			"demineur-interracted": body
+		}
+		const header = this.#jsonHeader()
+		fetch('/demineur/update', {
+			headers: header,
+			method: 'PUT',
+			body: JSON.stringify(gameSession)
+		}).then(response => response.json())
+		.then(data => {
+			const { matrix } = data
+			
+			//
+			// const size = Number(data.size)
+			//
+			// for (let y = 0; y < size; y++) {
+			// 	for (let x = 0; x < size; x++) {
+			// 		cell = matrix[y][x]
+			// 		const HTMLCell = this.#gameGrid[y][x]
+			// 		if (cell.opened === true) {
+			// 			const txt = cell.neighboringMines > 0 ? cell.neighboringMines : ''
+			// 			HTMLCell.text(txt)
+			// 			HTMLCell.getElement().style.backgroundColor = "rgba(0,185,41,0.4)"
+			// 		} else {
+			// 			HTMLCell.text('')
+			// 			HTMLCell.getElement().style.backgroundColor = ""
+			// 		}
+			//
+			// 		if (cell.isMarked) {
+			// 			HTMLCell.getElement().style.backgroundColor = "rgba(185,83,0,0.4)"
+			// 		}
+			// 	}
+			// }
+			
+			
+			matrix.map($case => {
+				const cell = this.#gameGrid[$case.case.y][$case.case.x]
+				const txt = $case.neighboringMines > 0 ? $case.neighboringMines : ''
+				cell.setProp('opened', $case.opened)
+				cell.setProp('marked', $case.isMarked)
+				if ($case.opened) {
+					cell.text(txt)
+				}
+			})
+		})
 	}
+	
+	
 }
