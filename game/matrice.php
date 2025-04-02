@@ -17,6 +17,8 @@
     private int $caseOpenedCount = 0;
     private array $caseHasUpdate = [];
 
+    private int $scaleCount;
+
     public function __construct()
     {
     }
@@ -90,6 +92,18 @@
     {
       return $this->minesCount;
     }
+    public function setMinesNumber(int $count): void
+    {
+      $this->minesCount = $count;
+    }
+    public function getScaleNumber(): int
+    {
+      return $this->scaleCount;
+    }
+    public function setScaleNumber(int $count): void
+    {
+      $this->scaleCount = $count;
+    }
 
     public function update(): array {
       $req = file_get_contents('php://input');
@@ -130,16 +144,16 @@
       $case = &$this->matrice[$y][$x];
 
       if (isset($case) && !$case['opened'] && !$case['isMarked'])  {
-        if ($case['isMine']) {
-          $case['opened'] = true;
-          $this->caseOpenedCount++;
-          $this->storeUpdate($x,$y);
-          return ['info' => 'failed'];
-        }
         $case['opened'] = true;
         $this->caseOpenedCount++;
         $this->storeUpdate($x,$y);
+        if ($case['isMine']) {
+          return ['info' => 'failed'];
+        }
         $this->openNeighboursCase($x, $y);
+        if ($this->winStatus()) {
+          return ['info' => 'success'];
+        }
         return ['info' => 'continue'];
       }
 
@@ -156,7 +170,9 @@
 
             if (!isset($nCase) || ($nCase['isMine'] && $nCase['opened']) || $nCase['isMarked'])  {
               continue;
-            } elseif (!$nCase['opened'] && !$nCase['isMarked'] && !$nCase['isMine'] && isset($nCase)) {
+            }
+
+            if (!$nCase['opened'] && !$nCase['isMarked'] && !$nCase['isMine'] && isset($nCase)) {
               $nCase['opened'] = true;
               $this->caseOpenedCount++;
               $this->storeUpdate($x+$dx, $y+$dy);
@@ -173,12 +189,28 @@
 
     private function storeUpdate(int $x, int $y): void
     {
+      $updateCase = [
+        ...$this->matrice[$y][$x],
+        "case" => ["x" => $x, "y" => $y]
+      ];
+      unset($updateCase["isMine"]);
+      $this->caseHasUpdate[] = $updateCase;
 
-      $this->caseHasUpdate[] =
-        [
-          ...$this->matrice[$y][$x],
-          "case" => ["x" => $x, "y" => $y]
-        ];
+    }
+
+    private function winStatus(): bool
+    {
+      $mines = $this->minesCount;
+      return $this->scaleCount - $mines === $this->caseOpenedCount;
+    }
+
+    public function getGameScore(int $level, int $gameTime): int
+    {
+      $level++;
+      $cases = $this->caseOpenedCount * $level * 100;
+      $time = ($this->scaleCount * $level * 100) / $gameTime;
+
+      return (int)($cases + $time);
     }
 
   }
