@@ -70,7 +70,7 @@
       $updateState = [];
 
       if (!isset($session["matrix"])) {
-        $matrice->generate($session['size'], $session['level']);
+        $matrice->generate($session['size'], $session['level'], (object) $userSession->{"demineur-interracted"});
         $session['startAt'] = time();
         $session['gameState'] = [
           "status" => "inGame",

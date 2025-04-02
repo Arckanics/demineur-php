@@ -43,7 +43,7 @@
     public function setOpenedCasesCount(int $count) {
       $this->caseOpenedCount = $count;
     }
-    public function generate(int $scale = 16, int $level = 2): void
+    public function generate(int $scale = 16, int $level = 2, object $interract = new \stdClass()): void
     {
       // Initialise la matrice et le nombre de cases non-mines autours de chaque case.
       $this->matrice = array_fill(0, $scale, array_fill(0, $scale, ['opened' => false, 'isMine' => false, 'isMarked' => false, 'neighboringMines' => 0]));
@@ -52,14 +52,18 @@
       $mines = $this->getMinesCount($scale, $level);
       $this->minesCount = $mines;
 
-      $minesCase = [];
+      $minesCases = [];
+
+      $action = $interract->action;
+      $ix = $interract->x;
+      $iy = $interract->y;
 
       // Applique les mines.
       while ($mines > 0) {
         $x = random_int(0, $scale - 1);
         $y = random_int(0, $scale - 1);
 
-        if (!$this->matrice[$y][$x]['isMine']) {
+        if (!$this->matrice[$y][$x]['isMine'] && !(($x === $ix && $y === $iy) && $action === "open")) {
           $this->matrice[$y][$x]['isMine'] = true;
 
           // Met à jour le nombre de mines autours de chaque case voisine.
@@ -73,13 +77,13 @@
             }
           }
 
-          $minesCase[] = &$this->matrice[$y][$x];
+          $minesCases[] = &$this->matrice[$y][$x];
 
           $mines--;
         }
       }
 
-      foreach ($minesCase as $mine) {
+      foreach ($minesCases as $mine) {
         $mine['neighboringMines'] = 0;
       }
     }
